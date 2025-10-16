@@ -6,6 +6,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <filesystem>
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include "Shader.h"
 #include "Camera.h"
 #include "Player.h"
@@ -108,6 +112,13 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
     // --- Load shaders ---
     Shader modelShader(findPath("shaders/model.vert").c_str(), findPath("shaders/model.frag").c_str());
     Shader skyShader(findPath("shaders/skybox.vert").c_str(), findPath("shaders/skybox.frag").c_str());
@@ -154,8 +165,14 @@ int main()
 
     Camera camera(glm::vec3(0.0f, 5.0f, 15.0f));
     std::vector<glm::vec3> bonePositions = {
-        {2.0f, 0.2f, -4.0f}, {-1.0f, 0.2f, 2.0f}, {4.0f, 0.2f, 1.0f}};
-    std::vector<bool> bonesCollected(3, false);
+        {2.0f, 0.2f, -4.0f}, {-3.0f, 0.2f, 2.0f}, {6.0f, 0.2f, -1.0f}, {-1.0f, 0.2f, -6.0f}, {4.0f, 0.2f, 4.0f},
+        {-6.0f, 0.2f, -3.0f}, {1.0f, 0.2f, 7.0f}, {-4.0f, 0.2f, 5.0f}, {7.0f, 0.2f, 1.0f}, {-2.0f, 0.2f, -8.0f}
+    };
+    std::vector<bool> bonesCollected(10, false);
+
+    std::vector<glm::vec3> trashPositions = {
+        {5.0f, 0.0f, -3.0f}, {-2.0f, 0.0f, 4.0f}, {3.0f, 0.0f, 2.0f}, {-5.0f, 0.0f, -1.0f}
+    };
 
     float lastFrame = 0.0f;
     while (!glfwWindowShouldClose(window))
@@ -170,7 +187,7 @@ int main()
 
         // Check collisions with bones
         AABB dogBox = Collision::FromPositionSize(player.position, glm::vec3(0.5f, 0.4f, 0.8f));
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             if (!bonesCollected[i])
             {
@@ -180,16 +197,17 @@ int main()
             }
         }
 
-        // trash collision
-        glm::vec3 trashPos = glm::vec3(5.0f, 0.0f, -3.0f);
-        glm::vec3 trashHalf = glm::vec3(0.6f, 1.0f, 0.6f);
-        AABB trashBox;
-        trashBox.min = trashPos - trashHalf;
-        trashBox.max = trashPos + trashHalf;
-        if (Collision::TestAABB(dogBox, trashBox))
+        for (int i = 0; i < 4; ++i)
         {
-            // revert to previous position so dog cannot pass through
-            player.position = prevPos;
+            glm::vec3 trashHalf = glm::vec3(0.6f, 1.0f, 0.6f);
+            AABB trashBox;
+            trashBox.min = trashPositions[i] - trashHalf;
+            trashBox.max = trashPositions[i] + trashHalf;
+            if (Collision::TestAABB(dogBox, trashBox))
+            {
+                player.position = prevPos;
+                break;
+            }
         }
 
         // Update camera (third-person follow)
@@ -215,15 +233,17 @@ int main()
         // make sure shader uses texture for scene/player
         modelShader.setInt("useObjectColor", 0);
 
-        glm::mat4 sceneM(1.0f);
-        sceneM = glm::translate(sceneM, glm::vec3(5.0f, 0.0f, -3.0f));
-        sceneM = glm::scale(sceneM, glm::vec3(0.025f));
-        modelShader.setMat4("model", sceneM);
-        glm::vec3 trashColor = glm::vec3(0.25f, 0.25f, 0.27f);
-        modelShader.setVec3("objectColor", trashColor);
-        modelShader.setInt("useObjectColor", 1);
-        sceneModel.Draw();
-        // reset to use texture for subsequent objects (player/bones)
+        for (int i = 0; i < 4; ++i)
+        {
+            glm::mat4 sceneM(1.0f);
+            sceneM = glm::translate(sceneM, trashPositions[i]);
+            sceneM = glm::scale(sceneM, glm::vec3(0.025f));
+            modelShader.setMat4("model", sceneM);
+            glm::vec3 trashColor = glm::vec3(0.25f, 0.25f, 0.27f);
+            modelShader.setVec3("objectColor", trashColor);
+            modelShader.setInt("useObjectColor", 1);
+            sceneModel.Draw();
+        }
         modelShader.setInt("useObjectColor", 0);
 
         // Draw player (rotate only while holding R)
@@ -239,7 +259,7 @@ int main()
         player.model.Draw();
 
         // Draw bones
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             if (!bonesCollected[i])
             {
@@ -258,10 +278,35 @@ int main()
         }
         modelShader.setInt("useObjectColor", 0);
 
-        // Draw skybox last
+        int collectedCount = 0;
+        for (bool collected : bonesCollected) {
+            if (collected) collectedCount++;
+        }
+        
+        std::string title = "Dog Bone Collector - Bones: " + std::to_string(collectedCount) + "/10";
+        if (collectedCount == 10) {
+            title += " - YOU WIN!";
+        }
+        glfwSetWindowTitle(window, title.c_str());
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 200, 10), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(180, 80), ImGuiCond_Always);
+        ImGui::Begin("Score", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+        ImGui::Text("Bones: %d/10", collectedCount);
+        if (collectedCount == 10) {
+            ImGui::TextColored(ImVec4(0,1,0,1), "YOU WIN!");
+        }
+        ImGui::End();
+
+        // Draw skybox
         glDepthFunc(GL_LEQUAL);
         skyShader.use();
-        skyShader.setMat4("view", glm::mat4(glm::mat3(view)));
+        glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+        skyShader.setMat4("view", skyboxView);
         skyShader.setMat4("projection", projection);
         glBindVertexArray(skyVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -269,9 +314,16 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
 
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;

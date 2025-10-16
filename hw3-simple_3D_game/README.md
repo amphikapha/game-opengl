@@ -4,26 +4,25 @@ A delightful 3D adventure game where you control a cute dog exploring a scenic e
 
 ## Screenshots
 
-![Game Screenshot](assets/screenshot.png)
+![Game Screenshot](assets/image.png)
+![Game Screenshot (WIN)](assets/image2.png)
 
 ## Video Demo
 
 [![Game Demo](assets/screenshot.png)](assets/gameplay.mp4)
 
-*Click the thumbnail above to view the full gameplay*
 
 ## Game Overview
 
-🐕 **Play as an adorable dog** exploring a 3D world  
-🦴 **Collect 3 bones** scattered around the environment  
-🗑️ **Navigate around obstacles** like trash cans  
-🌍 **Enjoy beautiful skybox environments** with realistic lighting  
+🐕 Play as an adorable dog  
+🦴 Collect 10 bones scattered around the environment  
+🗑️ Navigate around obstacles like trash cans
 
 ## Features
 
 ### 🎮 **Gameplay Mechanics**
 - **Third-Person Camera**: Smooth camera that follows behind the dog
-- **Bone Collection**: Find and collect 3 rotating bones to complete the game
+- **Bone Collection**: Collect 10 rotating bones to complete the game
 - **Collision System**: 
   - **Bone Collision**: Bones disappear when touched by the dog
   - **Obstacle Collision**: Dog cannot pass through trash cans and other objects
@@ -66,8 +65,6 @@ A delightful 3D adventure game where you control a cute dog exploring a scenic e
 - **Real-time Physics**: Frame-rate independent movement and collision
 - **Resource Management**: Efficient loading and rendering of 3D assets
 
-## Building and Running
-
 ### Prerequisites
 - **CMake** 3.16 or higher
 - **Visual Studio 2022** (Windows)
@@ -80,32 +77,6 @@ A delightful 3D adventure game where you control a cute dog exploring a scenic e
 - **Assimp**: 3D model loading
 - **stb_image**: Texture loading
 
-### Build Instructions
-1. **Clone** the repository
-2. **Create build directory**:
-   ```bash
-   mkdir build
-   cd build
-   ```
-3. **Configure CMake**:
-   ```bash
-   cmake ..
-   ```
-4. **Build the project**:
-   ```bash
-   cmake --build . --config Debug
-   ```
-5. **Run the game**:
-   ```bash
-   ./bin/Debug/Simple3DGame.exe
-   ```
-
-### Alternative: Visual Studio
-1. Open CMake GUI
-2. Set source folder to project directory
-3. Set build folder to `project/build`
-4. Configure → Generate → Open Project
-5. Build and run in Visual Studio
 
 ## Project Structure
 ```
@@ -147,6 +118,13 @@ hw3-simple_3D_game/
 ### Environment
 - **Skybox HDRI**: [Day Environment HDRI048](https://acg-download.struffelproductions.com/file/ambientCG-Web/download/DayEnvironmentHDRI048_BydQDoxF/DayEnvironmentHDRI048_4K-TONEMAPPED.jpg) from AmbientCG
 - **Cubemap Conversion**: Panorama converted to cubemap using [Panorama to Cubemap Tool](https://jaxry.github.io/panorama-to-cubemap/)
+- **File Naming**: After conversion, rename the cubemap faces as follows:
+  - `px` → `right.png`
+  - `nx` → `left.png`
+  - `py` → `top.png`
+  - `ny` → `bottom.png`
+  - `pz` → `front.png`
+  - `nz` → `back.png`
 
 *All assets are used in accordance with their respective licenses for educational purposes.*
 

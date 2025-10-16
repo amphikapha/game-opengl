@@ -49,6 +49,25 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(assimp)
 
+# imgui
+FetchContent_Declare(
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui.git
+  GIT_TAG        v1.89.9
+)
+FetchContent_MakeAvailable(imgui)
+
+# imgui sources
+set(IMGUI_SOURCES
+  ${imgui_SOURCE_DIR}/imgui.cpp
+  ${imgui_SOURCE_DIR}/imgui_demo.cpp
+  ${imgui_SOURCE_DIR}/imgui_draw.cpp
+  ${imgui_SOURCE_DIR}/imgui_tables.cpp
+  ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
 # include directories
 include_directories(
   ${glad_SOURCE_DIR}/include
@@ -56,12 +75,14 @@ include_directories(
   ${glm_SOURCE_DIR}
   ${stb_SOURCE_DIR}
   ${assimp_SOURCE_DIR}/include
+  ${imgui_SOURCE_DIR}
+  ${imgui_SOURCE_DIR}/backends
   ${CMAKE_SOURCE_DIR}/include
 )
 
 # source files
 file(GLOB SRC "src/*.cpp")
-add_executable(Simple3DGame ${SRC})
+add_executable(Simple3DGame ${SRC} ${IMGUI_SOURCES})
 
 # link libraries
 target_link_libraries(Simple3DGame PRIVATE glfw glad assimp)
