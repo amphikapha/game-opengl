@@ -8,9 +8,8 @@ A mesmerizing 3D kinetic sculpture created with OpenGL, featuring complex geomet
 
 ## Video Demo
 
-[![Kinetic Sculpture Demo](assets/Screenshot%202025-09-29%20191150.png)](assets/Enhanced%20Kinetic%20Sculpture%202025-09-29%2019-12-19.mp4)
+https://github.com/user-attachments/assets/87aac4d9-5fdb-4065-a126-5a0bfe309f85
 
-*Click the thumbnail above to view the full animation*
 
 ## Features
 
