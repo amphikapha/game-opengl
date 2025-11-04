@@ -4,12 +4,13 @@ A delightful 3D adventure game where you control a cute dog exploring a scenic e
 
 ## Screenshots
 
-![Game Screenshot](assets/image.png)
-![Game Screenshot (WIN)](assets/image2.png)
+<img width="1282" height="758" alt="image" src="https://github.com/user-attachments/assets/6deb88b8-3637-417a-b03b-4ee9b8cc92f1" />
+<img width="1282" height="758" alt="image2" src="https://github.com/user-attachments/assets/0d199551-7d00-4e0b-a21d-c6b0daf34247" />
+
 
 ## Video Demo
 
-[![Game Demo](assets/screenshot.png)](assets/gameplay.mp4)
+https://github.com/user-attachments/assets/2d566e79-8b98-4750-8c8f-801f2eba8651
 
 
 ## Game Overview
