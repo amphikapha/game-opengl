@@ -2,4 +2,5 @@ build/
 .vscode/
 cubemap/
 models/
-textures/
+textures
+*.zip
