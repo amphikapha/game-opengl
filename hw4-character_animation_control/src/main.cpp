@@ -36,6 +36,7 @@ void processInput(GLFWwindow *window, Animator &animator, glm::vec3 &characterPo
 Animation* idleAnim_ptr = nullptr;
 Animation* walkAnim_ptr = nullptr;
 Animation* danceAnim_ptr = nullptr;
+Animation* g_currentAnimation = nullptr;  // Track current animation to prevent restarting
 
 // Dance state tracking
 bool isDancingState = false;
@@ -101,6 +102,10 @@ int main()
     // Character position and rotation
     glm::vec3 characterPos(0.0f, -0.5f, 0.0f);
     float characterRotation = 0.0f;
+    
+    // Initialize with idle animation
+    animator.PlayAnimation(idleAnim_ptr);
+    g_currentAnimation = idleAnim_ptr;
 
     while(!glfwWindowShouldClose(window)){
         float currentFrame = glfwGetTime();
@@ -177,7 +182,6 @@ void processInput(GLFWwindow* window, Animator &animator, glm::vec3 &characterPo
     if(glfwGetKey(window,GLFW_KEY_E)==GLFW_PRESS && !isDancingState) {
         isDancingState = true;
         lastDanceKeyPressTime = glfwGetTime();
-        animator.PlayAnimation(danceAnim_ptr);
     }
     
     // Check if dance animation has finished
@@ -186,14 +190,20 @@ void processInput(GLFWwindow* window, Animator &animator, glm::vec3 &characterPo
         isDancingState = false;
     }
     
-    // Set animation based on input (only if not dancing)
-    if (!isDancingState) {
-        if (isMoving) {
-            animator.PlayAnimation(walkAnim_ptr);
-        } else {
-            // Play idle animation when not moving or dancing
-            animator.PlayAnimation(idleAnim_ptr);
-        }
+    // Determine target animation
+    Animation* targetAnimation = nullptr;
+    if (isDancingState) {
+        targetAnimation = danceAnim_ptr;
+    } else if (isMoving) {
+        targetAnimation = walkAnim_ptr;
+    } else {
+        targetAnimation = idleAnim_ptr;
+    }
+    
+    // Only change animation if it's different from current
+    if (targetAnimation != g_currentAnimation) {
+        animator.PlayAnimation(targetAnimation);
+        g_currentAnimation = targetAnimation;
     }
     
     // Camera controls (keep original camera movement for better viewing)
