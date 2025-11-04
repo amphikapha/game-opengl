@@ -56,6 +56,5 @@ hw4-character_animation_control/
 
 ## 🎬 **Gameplay Video**
 
+https://github.com/user-attachments/assets/d701f7cf-9181-4a03-ba69-5882dfe75296
 
-
-*A playable character animation system showcasing real-time animation control and 3D character movement* 🎮✨
