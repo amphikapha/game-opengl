@@ -56,5 +56,5 @@ hw4-character_animation_control/
 
 ## 🎬 **Gameplay Video**
 
-https://github.com/user-attachments/assets/d701f7cf-9181-4a03-ba69-5882dfe75296
+https://github.com/user-attachments/assets/e8413c84-329d-4dd6-8577-ab8d3806230d
 
